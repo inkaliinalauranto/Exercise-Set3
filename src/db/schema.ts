@@ -8,8 +8,10 @@ export const posts = sqliteTable("posts", {
     id: integer("id").primaryKey(),
     title: text("title").notNull(), 
     content: text("content").notNull(), 
-    createdAt: integer("created_at").notNull().default(sql`(current_timestamp)`),
-    parentPostId: integer("parent_post_id").references((): AnySQLiteColumn => posts.id), 
+    createdAt: text("created_at").notNull().default(sql`(current_timestamp)`),
+    parentPostId: integer("parent_post_id").references(
+        (): AnySQLiteColumn => posts.id, {onDelete: "cascade", onUpdate: "cascade"}
+    ), 
     userId: integer("user_id").notNull()
 });
 

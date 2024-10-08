@@ -81,7 +81,7 @@ Lisätään tietokantaan vielä muutama aloitus- ja vastausviesti:
 
 Koska jokaisen aloitusviestin parent_post_id-sarakkeen arvo on NULL, saadaan aloitusviestit haettua seuraavanlaisella kyselyllä:
 
-SELECT * FROM users WHERE parent_post_id IS NULL;
+>SELECT * FROM users WHERE parent_post_id IS NULL;
 
 Haetaan aloitusviestit nyt Drizzle runnerin kautta:
 
@@ -91,7 +91,7 @@ D) Aloitusviestin vastausten hakeminen yhdellä tietokantakyselyllä
 
 Koska jokaisen aloitusviestin vastausviestin parent_post_id-sarakkeessa on sama arvo eli näiden "parent"-viestin id, saadaan tietyn aloitusviestin vastaukset haettua aloitusviestin id:n perusteella seuraavantyyppisellä kyselyllä
 
-SELECT * FROM users WHERE parent_post_id = {aloitusviestin id}
+>SELECT * FROM users WHERE parent_post_id = {aloitusviestin id}
 
 Jos nyt halutaan hakea esimerkiksi ensimmäisen aloitusviestin vastausviestit, asetetaan {aloitusviestin id}-kohdan tilalle luku 1. Haetaan ensimmäisen aloitusviestin vastausviestit Drizzle runnerin kautta
 
@@ -99,6 +99,24 @@ Jos nyt halutaan hakea esimerkiksi ensimmäisen aloitusviestin vastausviestit, a
 
 Haetaan yhdellä tietokantakyselyllä myös sekä aloitusviesti että sen vastausviestit liittämällä kyselyyn OR-vertailu:
 
-SELECT * FROM users WHERE parent_post_id = 1 OR id = 1;
+>SELECT * FROM users WHERE parent_post_id = 1 OR id = 1;
 
 ![alt text](image-14.png)
+
+E) Aloitusviestin poistamisen ongelma, kun sille on olemassa vastauksia
+
+Jos jonkin vastausviestin "parent"-viesti koitetaan poistaa, ei se onnistu, koska relaatioilla on oletuksena no action -toiminto. Silloin tietuetta, josta on vierasavainviite toiseen tietueeseen, ei voida poistaa, jottei vierasavaimellinen tietue jää orvoksi. 
+
+![alt text](image-15.png)
+
+Käyttölogiikan kannalta viisainta lienee poistaa myös vastausviestit, kun näiden "parent"-viesti poistetaan. Määritellään siksi vierasavaintoiminnoksi no action -toiminnon sijaan cascade sekä muokkaaville että poistaville kyselyille: 
+
+![alt text](image-16.png)
+
+Generoidaan ja migroidaan tietokanta, jotta vierasavaintoimintoon liittyvä muutos saadaan voimaan. Käynnistetään sen jälkeen Drizzle Studio. Huolehditaan, että aiemmin lisätyt tietueet ovat tietokannassa. Suoritetaan sitten ensimmäisen aloitusviestin poistava kysely, joka tällä kertaa onnistuu.
+
+![alt text](image-17.png)
+
+Huomataan, ettei posts-taulussa ole aloitusviestin poistamisen jälkeen myöskään viestin vastaustietueita.
+
+![alt text](image-18.png)
