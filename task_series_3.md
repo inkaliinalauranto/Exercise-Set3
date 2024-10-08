@@ -47,7 +47,58 @@ Koska aloitusviestillä voi olla useita vastausviestejä mutta viestillä voi ol
 
 C) Lisätään tauluun uusi sarake
 
-Lisätään viestitietueille title-sarake tekstitietotyypillä. Jos halutaan, että jokaisella viestillä on otsikko, määritellään sarake posts-muuttujaan not-nulliksi. Koska tietokanta on tässä vaiheessa tekeillä, poistetaan projektin juuresta drizzle-kansio sisältöineen ja sqlite.db-tiedosto. Ajetaan taulua kuvaavaan post-muuttujaan tehtyjen muutosten jälkeen projektin juuressa komennot npm run generate, npm run migrate ja npm run studio. Luomiskomennon jälkeen konsoliin tulostuu tieto, että posts-niminen taulu on luotu kuudella sarakkeella ja yhdellä vierasavaimella. Nyt myös Drizzle Studiossa näkyvään posts-tauluun on ilmestynyt relaatiot ja title-sarake:
+Lisätään viestitietueille title-sarake tekstitietotyypillä. Jos halutaan, että jokaisella viestillä on otsikko, määritellään sarake posts-muuttujaan not-nulliksi. Koska taulun rakenteeseen tehtiin muutoksia, on tietokanta generoitava uudelleen. Koska tietokanta on tässä vaiheessa vasta tekeillä, poistetaan projektin juuresta drizzle-kansio sisältöineen ja sqlite.db-tiedosto. Ajetaan taulua kuvaavaan post-muuttujaan tehtyjen muutosten jälkeen projektin juuressa komennot npm run generate, npm run migrate ja npm run studio. Luomiskomennon jälkeen konsoliin tulostuu tieto, että posts-niminen taulu on luotu kuudella sarakkeella ja yhdellä vierasavaimella. Nyt myös Drizzle Studiossa näkyvään posts-tauluun on ilmestynyt relaatiot ja title-sarake:
 
 ![alt text](image-6.png)
 
+### 2. Lisää testidataa tietokantaan
+
+A) Lisätään tietokantaan aloitusviesti
+
+Lisätään viesti Drizzle Studiossa Drizzle runnerin kautta. Koska kyseessä on aloitusviesti, lisättävän viestin parent_post_id-sarakkeen arvo on null:
+
+![alt text](image-7.png)
+
+Tämän jälkeen lisätty tietue näkyy posts-taulussa:
+
+![alt text](image-8.png)
+
+B) Lisätään tietokantaan vastausviesti
+
+Lisätään Drizzle runnerin kautta äsken lisätylle aloitusviestille vastausviesti. Nyt lisättävän tietueen parent_post_id-sarakkeen arvon on oltava viite ensimmäisenä lisättyyn tietueeseen eli aloitusviestin id.
+
+![alt text](image-9.png)
+
+Tämän jälkeen lisätty vastausviesti näkyy posts-taulussa:
+
+![alt text](image-10.png)
+
+C) Aloitusviestien hakeminen tietokannasta
+
+Lisätään tietokantaan vielä muutama aloitus- ja vastausviesti:
+
+![alt text](image-11.png)
+
+Koska jokaisen aloitusviestin parent_post_id-sarakkeen arvo on NULL, saadaan aloitusviestit haettua seuraavanlaisella kyselyllä:
+
+SELECT * FROM users WHERE parent_post_id IS NULL;
+
+Haetaan aloitusviestit nyt Drizzle runnerin kautta:
+
+![alt text](image-12.png)
+
+D) Aloitusviestin vastausten hakeminen yhdellä tietokantakyselyllä
+
+Koska jokaisen aloitusviestin vastausviestin parent_post_id-sarakkeessa on sama arvo eli näiden "parent"-viestin id, saadaan tietyn aloitusviestin vastaukset haettua aloitusviestin id:n perusteella seuraavantyyppisellä kyselyllä
+
+SELECT * FROM users WHERE parent_post_id = {aloitusviestin id}
+
+Jos nyt halutaan hakea esimerkiksi ensimmäisen aloitusviestin vastausviestit, asetetaan {aloitusviestin id}-kohdan tilalle luku 1. Haetaan ensimmäisen aloitusviestin vastausviestit Drizzle runnerin kautta
+
+![alt text](image-13.png)
+
+Haetaan yhdellä tietokantakyselyllä myös sekä aloitusviesti että sen vastausviestit liittämällä kyselyyn OR-vertailu:
+
+SELECT * FROM users WHERE parent_post_id = 1 OR id = 1;
+
+![alt text](image-14.png)
