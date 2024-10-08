@@ -1,6 +1,6 @@
 # Tehtäväsarja 3
 
-## Esivalmistelut
+## Esitiedot
 
 Tämä tehtävä on tehty Hono-projektina npm-paketinhallintaohjelmalla. Tietokanta on toteutettu Drizzle ORM -kirjastoa hyödyntämällä. Hono-projektin juureen on luotu drizzle.config.ts-tiedosto ja db-kansio. drizzle.config.ts-tiedostossa on Drizzle ORM -kirjaston käyttöön liittyviä määrittelyjä. Konfiguraatiofunktiokutsussa määritellään muun muassa, että käytetään SQLite-tietokantaa. Lisäksi määritellään polku tiedostoon, jossa tietokannan rakenne on määritelty, sekä tietokannan tiedostonimi.
 
@@ -14,6 +14,7 @@ Jotta tietokannan luonti ja sen tarkastelu Drizzle Studio -työkalun avulla onni
 
 ![alt text](./images/image-3.png)
 
+## Toteutus
 ### 1. Toteuta määrittelyn pohjalta valitsemaasi tietokantaratkaisuun tarvittavat muutokset
 
 A) Lisätään tietokantaan posts-taulu viesteille/postauksille määritellyn datarakenteen pohjalta:
@@ -36,7 +37,7 @@ Uusi tietue on nyt lisätty posts-tauluun. Tietokanta huolehti id:n ja aikaleima
 
 B) Lisätään posts-tauluun viiteavain postaukseen itseensä. 
 
-Vaatimusmäärittelyn mukaan aloitusviestillä voi olla vastausviestejä, minkä vuoksi viestien välille tarvitaan relaatio/viite. Koska viite tehdään tauluun itseensä, tehdään tauluun sarake parent_post_id. Jos tämän sarakkeen arvo tietueella on null, kyseessä on aloitusviesti. Jos tietueelta löytyy sarakkeen kohdasta arvo, kyseessä on vastausviesti. Sarakkeen arvo on silloin toisen viestitietueen id. Näin ollen parent_post_id-sarakkeesta on määriteltävä viiteavaimeksi ja viite tehdään id-sarakkeeseen. 
+Vaatimusmäärittelyn mukaan aloitusviestillä voi olla vastausviestejä, minkä vuoksi viestien välille tarvitaan relaatio/viite. Koska viite tehdään tauluun itseensä, on taulussa sarake parent_post_id. Jos tämän sarakkeen arvo tietueella on null, kyseessä on aloitusviesti. Jos tietueelta löytyy sarakkeen kohdasta arvo, kyseessä on vastausviesti. Sarakkeen arvo on silloin toisen viestitietueen id. Näin ollen parent_post_id-sarake on määriteltävä viiteavaimeksi, ja viite tehdään id-sarakkeeseen. 
 
 ![alt text](image-4.png)
 
@@ -44,4 +45,9 @@ Koska aloitusviestillä voi olla useita vastausviestejä mutta viestillä voi ol
 
 ![alt text](image-5.png)
 
+C) Lisätään tauluun uusi sarake
+
+Lisätään viestitietueille title-sarake tekstitietotyypillä. Jos halutaan, että jokaisella viestillä on otsikko, määritellään sarake posts-muuttujaan not-nulliksi. Koska tietokanta on tässä vaiheessa tekeillä, poistetaan projektin juuresta drizzle-kansio sisältöineen ja sqlite.db-tiedosto. Ajetaan taulua kuvaavaan post-muuttujaan tehtyjen muutosten jälkeen projektin juuressa komennot npm run generate, npm run migrate ja npm run studio. Luomiskomennon jälkeen konsoliin tulostuu tieto, että posts-niminen taulu on luotu kuudella sarakkeella ja yhdellä vierasavaimella. Nyt myös Drizzle Studiossa näkyvään posts-tauluun on ilmestynyt relaatiot ja title-sarake:
+
+![alt text](image-6.png)
 
