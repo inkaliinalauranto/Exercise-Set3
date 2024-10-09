@@ -21,4 +21,4 @@ Käynnistä Drizzle Studio, jossa tietokantaa voidaan tarkastella ja tietokantao
 ```
 npm run studio
 ```
-Siirry Drizzle Studioon: https://local.drizzle.studio/
+Siirry Drizzle Studioon: https://local.drizzle.studio

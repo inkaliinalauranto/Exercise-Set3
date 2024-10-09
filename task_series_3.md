@@ -25,7 +25,7 @@ Vaatimusmäärittelyiden mukaisesti id-sarake määritellään primary keyksi pr
 
 <img src="./assets/image-4.png" alt="posts-taulun luonti" style="width: 60%;"/>
 
-Ajetaan komentoterminaalissa projektin juurisijainnissa ensin komento `npm run generate`, sitten `npm run migrate` ja lopuksi `npm run studio`, minkä jälkeen tietokanta posts-taululla on luotu. Projektin juuresta löytyy tämän jälkeen sqlite.db-niminen tietokanta. Luotua tietokannan taulua pääsee tarkastelemaan Drizzle Studiossa osoittessa https://local.drizzle.studio/. posts-taulusta löytyy nyt posts-muuttujaan määritellyt sarakkeet:
+Ajetaan komentoterminaalissa projektin juurisijainnissa ensin komento `npm run generate`, sitten `npm run migrate` ja lopuksi `npm run studio`, minkä jälkeen tietokanta posts-taululla on luotu. Projektin juuresta löytyy tämän jälkeen sqlite.db-niminen tietokanta. Luotua tietokannan taulua pääsee tarkastelemaan Drizzle Studiossa osoittessa https://local.drizzle.studio. posts-taulusta löytyy nyt posts-muuttujaan määritellyt sarakkeet:
 
 ![posts-taulu Drizzle Studiossa](./assets/image-5.png)
 
