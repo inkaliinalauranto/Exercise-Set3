@@ -1,7 +1,9 @@
 ## Projektin konfigurointi
 
 Kloonaa repositorio:
-```git clone https://github.com/inkaliinalauranto/Exercise-Set3.git```
+```
+git clone https://github.com/inkaliinalauranto/Exercise-Set3.git
+```
 Siirry projektikansioon:
 ```
 cd Exercise-Set3
