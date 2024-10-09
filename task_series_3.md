@@ -81,7 +81,7 @@ Lisätään tietokantaan vielä muutama aloitus- ja vastausviesti:
 
 Koska jokaisen aloitusviestin parent_post_id-sarakkeen arvo on NULL, saadaan aloitusviestit haettua seuraavanlaisella kyselyllä:
 
->SELECT * FROM users WHERE parent_post_id IS NULL;
+>SELECT * FROM posts WHERE parent_post_id IS NULL;
 
 Haetaan aloitusviestit nyt Drizzle runnerin kautta:
 
@@ -91,7 +91,7 @@ D) Aloitusviestin vastausten hakeminen yhdellä tietokantakyselyllä
 
 Koska jokaisen aloitusviestin vastausviestin parent_post_id-sarakkeessa on sama arvo eli näiden "parent"-viestin id, saadaan tietyn aloitusviestin vastaukset haettua aloitusviestin id:n perusteella seuraavantyyppisellä kyselyllä
 
->SELECT * FROM users WHERE parent_post_id = {aloitusviestin id}
+>SELECT * FROM posts WHERE parent_post_id = {aloitusviestin id}
 
 Jos nyt halutaan hakea esimerkiksi ensimmäisen aloitusviestin vastausviestit, asetetaan {aloitusviestin id}-kohdan tilalle luku 1. Haetaan ensimmäisen aloitusviestin vastausviestit Drizzle runnerin kautta
 
@@ -99,7 +99,7 @@ Jos nyt halutaan hakea esimerkiksi ensimmäisen aloitusviestin vastausviestit, a
 
 Haetaan yhdellä tietokantakyselyllä myös sekä aloitusviesti että sen vastausviestit liittämällä kyselyyn OR-vertailu:
 
->SELECT * FROM users WHERE parent_post_id = 1 OR id = 1;
+>SELECT * FROM posts WHERE parent_post_id = 1 OR id = 1;
 
 ![alt text](image-14.png)
 
@@ -109,7 +109,7 @@ Jos jonkin vastausviestin "parent"-viesti koitetaan poistaa, ei se onnistu, kosk
 
 ![alt text](image-15.png)
 
-Käyttölogiikan kannalta viisainta lienee poistaa myös vastausviestit, kun näiden "parent"-viesti poistetaan. Määritellään siksi vierasavaintoiminnoksi no action -toiminnon sijaan cascade sekä muokkaaville että poistaville kyselyille: 
+Vaatimusmäärittelyn mukaan vastausviestit on poistettava, kun näiden "parent"- eli aloitusviesti poistetaan. Määritellään siksi vierasavaintoiminnoksi no action -toiminnon sijaan cascade-toiminto sekä muokkaaville että poistaville kyselyille. Toiminto huolehtii siitä, että tietueet, joissa on viiteavain poistettavasta tietueesta, poistetaan, eikä tauluun jää orpoja tietueita. Vastaavasti tietueiden viiteavaimet päivittyvät, jos niiden "parent"-tietueen primary keyn arvo päivittyy, jolloin tauluun ei jää tietueita vanhalla viitteellä. 
 
 ![alt text](image-16.png)
 
@@ -120,3 +120,36 @@ Generoidaan ja migroidaan tietokanta, jotta vierasavaintoimintoon liittyvä muut
 Huomataan, ettei posts-taulussa ole aloitusviestin poistamisen jälkeen myöskään viestin vastaustietueita.
 
 ![alt text](image-18.png)
+
+### 3. Lisäominaisuuden suunnitteleminen ja määritteleminen
+
+A) Suunnitellun lisäominaisuuden kuvaus
+
+Käyttäjien on mahdollista antaa tykkäys mihin tahansa keskustelupalstan viestiin.
+
+B) Vaatimusmäärittely
+
+- Viesteissä ei oletusarvoisesti ole tykkäyksiä
+- Kuka tahansa käyttäjä voi tykätä mistä tahansa viestistä
+- Yksi käyttäjä voi tykätä viestistä samanaikaisesti vain kerran
+- Käyttäjä voi poistaa tykkäyksensä mistä tahansa viestistä
+- Kun viestiä tarkastellaan, siinä olevien tykkäysten lukumäärä on käyttäjälle näkyvissä
+
+C) Muutosten kuvaileminen keskustelupalstan datarakenteeseen 
+
+Koska yksi käyttäjä voi antaa tykkäyksen monelle viestille ja yhdellä viestillä voi olla monen eri käyttäjän tykkäys, on viestin ja käyttäjän välillä many-to-many-yhteys. Luodaan tykkäyksiä kuvavastavalle yhteydelle siis välitaulu, jonka nimi voisi olla esimerkiksi likes. Taulun primary key on komposiittiavain, joka muodostuu viiteavaimista posts- ja users-tauluihin. likes-taululla on siis kaksi saraketta: user_id ja post_id, jotka kumpikin ovat viiteavaimia. 
+
+Kun käyttäjä tykkää viestistä, likes-tauluun lisätään esimerkiksi web-ohjelmointirajapintafunktion kautta tietue, jossa on tykätyn viestitietueen id sekä tykkäyksen antaneen käyttäjän id. Koska primary keyn on oltava ainutlaatuinen (Yasar 2022), voi yhdellä käyttäjällä yhtä viestiä kohtaan olla likes-taulussa ainoastaan yksi tietue. Näin ollen taulun rakenne hoitaa sen, että yksittäinen käyttäjä voi tykätä yksittäisestä viestistä samanaikaisesti vain kerran. Jos käyttäjä poistaa tykkäyksensä viestistä, rajapintafunktion kautta likes-taulusta poistetaan tietue, jonka user_id vastaa tykkäyksen poistavaa käyttäjää ja post_id viestiä, josta käyttäjä poistaa tykkäyksensä.
+
+![alt text](image-19.png)
+
+Vaatimusmäärittelyn mukaisille viestikohtaisille tykkäysmäärille ei tässä ratkaisussa tehtäisi suoraan taulua tai saraketta olemassa oleviin tauluihin. Sen sijaan kunkin viestin tykkäyslukumäärien hakeminen voitaisiin liittää esimerkiksi rajapintakyselyyn, joka hakee viestin tiedot. Viestin tiedot hakevaan rajapintakyselyyn voitaisiin siis sisällyttää toinen seuraavanlainen tykkäysten lukumäärän hakeva SELECT-kysely:
+
+>SELECT COUNT(user_id) AS like_count FROM likes WHERE post_id = {haettavan viestin id};
+
+Mikäli koostefunktioihin liittyvät käytänteet sallivat, voitaisiin yllä oleva SELECT-kysely vaihtoehtoisesti sisällyttää viestin tiedot hakevaan SELECT-kyselyyn kyselyliitoksella. Varsinaisesta rajapintafunktiosta palautettaisiin lopuksi esimerkiksi viestin tiedot sisältävä JSON-objekti, jonka yhtenä avaimena olisi "likeCount" haetulla arvolla.
+
+### Lähteet
+
+Yasar, K. 2022. primary key (primary keyword). Viitattu 9.10.2024 https://www.techtarget.com/searchdatamanagement/definition/primary-key
+
