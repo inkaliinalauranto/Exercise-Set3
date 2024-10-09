@@ -41,7 +41,7 @@ Uusi tietue on nyt lisätty posts-tauluun. Tietokanta on huolehtinut id:n ja aik
 
 Vaatimusmäärittelyn mukaan aloitusviestille voi olla vastausviestejä, minkä vuoksi viestien välille tarvitaan relaatio/viite. Koska viite tehdään tauluun itseensä, on taulussa sarake parent_post_id. Jos tämän sarakkeen arvo tietueella on null, kyseessä on aloitusviesti. Jos tietueelta löytyy sarakkeen kohdasta arvo, kyseessä on vastausviesti. Sarakkeen arvo on silloin toisen viestitietueen id. Näin ollen parent_post_id-sarake on määriteltävä viiteavaimeksi ja viite on id-sarakkeeseen. Määritellään koodissa parent_post_id-sarake  viiteavaimeksi references-metodia hyödyntämällä:
 
-<img src="./assets/image-8.png" alt="Sarakkeen määrittely viiteavaimeksi ohjelmallisesti" style="width: 80%;"/>
+<img src="./assets/image-8.png" alt="Sarakkeen määrittely viiteavaimeksi ohjelmallisesti" style="width: 75%;"/>
 
 Koska aloitusviestillä voi olla useita vastausviestejä mutta viestillä voi olla korkeintaan yksi "parent"-viesti, tehdään posts-taulusta one-to-many-relaatio itseensä. Määritellään relaatiot aloitusviestistä mahdollisiin vastausviesteihin ja vastausviestistä aloitusviestiin omiin muuttujiinsa.
 
@@ -91,11 +91,11 @@ Haetaan aloitusviestit nyt Drizzle runnerin kautta:
 
 **D) Aloitusviestin vastausten hakeminen yhdellä tietokantakyselyllä**
 
-Koska jokaisen aloitusviestin vastausviestin parent_post_id-sarakkeessa on sama arvo eli näiden "parent"-viestin id, saadaan tietyn aloitusviestin vastaukset haettua aloitusviestin id:n perusteella seuraavantyyppisellä kyselyllä
+Koska jokaisen aloitusviestin vastausviestin parent_post_id-sarakkeessa on sama arvo eli näiden "parent"-viestin id, saadaan tietyn aloitusviestin vastaukset haettua aloitusviestin id:n perusteella seuraavantyyppisellä kyselyllä:
 
 >SELECT * FROM posts WHERE parent_post_id = {aloitusviestin id}
 
-Jos nyt halutaan hakea esimerkiksi ensimmäisen aloitusviestin vastausviestit, asetetaan {aloitusviestin id}-kohdan tilalle luku 1. Haetaan ensimmäisen aloitusviestin vastausviestit Drizzle runnerin kautta
+Jos nyt halutaan hakea esimerkiksi ensimmäisen aloitusviestin vastausviestit, asetetaan {aloitusviestin id}-kohdan tilalle luku 1. Haetaan ensimmäisen aloitusviestin vastausviestit Drizzle runnerin kautta:
 
 ![Ensimmäisen viestin vastausten hakeminen](./assets/image-17.png)
 
@@ -113,7 +113,7 @@ Jos jonkin vastausviestin "parent"-viesti koitetaan poistaa, ei operaatio oletus
 
 Vaatimusmäärittelyn mukaan vastausviestit on poistettava, kun näiden "parent"- eli aloitusviesti poistetaan. Määritellään siksi parent_post_id-sarakkeen vierasavaintoiminnoksi no action -toiminnon sijaan cascade-toiminto sekä muokkaaville että poistaville kyselyille. Toiminto huolehtii siitä, että tietueet, joissa on viiteavain poistettavasta tietueesta, poistetaan, eikä tauluun jää orpoja tietueita. Vastaavasti tietueiden viiteavaimet päivittyvät, jos niiden "parent"-tietueen primary keyn arvo päivittyy, jolloin tauluun ei jää tietueita vanhalla viitteellä. 
 
-<img src="./assets/image-20.png" alt="Viite-eheyssäännön ohjelmallinen muuttaminen cascade-arvoon" style="width: 80%;"/>
+<img src="./assets/image-20.png" alt="Viite-eheyssäännön ohjelmallinen muuttaminen cascade-arvoon" style="width: 75%;"/>
 
 Generoidaan ja migroidaan tietokanta, jotta vierasavaintoimintoon liittyvä muutos saadaan voimaan. Käynnistetään sen jälkeen Drizzle Studio. Huolehditaan, että aiemmin lisätyt tietueet ovat tietokannassa. Suoritetaan sitten ensimmäisen aloitusviestin poistava kysely, joka tällä kertaa onnistuu.
 
@@ -123,7 +123,7 @@ Huomataan, ettei posts-taulussa ole aloitusviestin poistamisen jälkeen myöskä
 
 ![posts-taulu aloitusviestin ja sen vastausviestien poistamisen jälkeen](./assets/image-22.png)
 
-### 3. Lisäominaisuuden suunnitteleminen ja määritteleminen
+### 3. Suunnittele ja määrittele lisäominaisuus: tykkäykset viesteihin
 
 **A) Suunnitellun lisäominaisuuden kuvaus**
 
@@ -143,7 +143,7 @@ Koska yksi käyttäjä voi antaa tykkäyksen monelle viestille ja yhdellä viest
 
 Kun käyttäjä tykkää viestistä, likes-tauluun lisätään esimerkiksi web-ohjelmointirajapintafunktion kautta tietue, jossa on tykätyn viestitietueen id sekä tykkäyksen antaneen käyttäjän id. Koska primary keyn on oltava ainutlaatuinen (Yasar 2022), voi yhdellä käyttäjällä yhtä viestiä kohtaan olla likes-taulussa ainoastaan yksi tietue. Näin ollen taulun rakenne hoitaa sen, että yksittäinen käyttäjä voi tykätä yksittäisestä viestistä samanaikaisesti vain kerran. Jos käyttäjä poistaa tykkäyksensä viestistä, rajapintafunktion kautta likes-taulusta poistetaan tietue, jonka user_id vastaa tykkäyksen poistavaa käyttäjää ja post_id viestiä, josta käyttäjä poistaa tykkäyksensä.
 
-<img src="./assets/image-23.png" alt="Aloitsuviestin poistaminen viite-eheyssäännön cascadeksi muuttamisen jälkeen" style="width: 80%;"/>
+<img src="./assets/image-23.png" alt="Aloitsuviestin poistaminen viite-eheyssäännön cascadeksi muuttamisen jälkeen" style="width: 75%;"/>
 
 Vaatimusmäärittelyn mukaisille viestikohtaisille tykkäysmäärille ei tässä ratkaisussa tehtäisi suoraan taulua tai saraketta olemassa oleviin tauluihin. Sen sijaan kunkin viestin tykkäyslukumäärien hakeminen voitaisiin integroida esimerkiksi rajapintafunktioon, joka hakee viestin tiedot. Viestin tiedot hakevaan rajapintafunktioon voitaisiin siis sisällyttää toinen seuraavanlainen tykkäysten lukumäärän hakeva SELECT-kysely:
 
