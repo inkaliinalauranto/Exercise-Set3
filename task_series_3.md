@@ -153,5 +153,4 @@ Mikäli koostefunktioihin liittyvät käytänteet sallivat, voitaisiin yllä ole
 
 ### Lähteet
 
-Yasar, K. 2022. primary key (primary keyword). Viitattu 9.10.2024 https://www.techtarget.com/searchdatamanagement/definition/primary-key
-
+Yasar, K. 2022. primary key (primary keyword). Viitattu 9.10.2024 https://www.techtarget.com/searchdatamanagement/definition/primary-key.
