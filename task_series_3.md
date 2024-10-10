@@ -136,12 +136,16 @@ Käyttäjien on mahdollista antaa tykkäys mihin tahansa keskustelupalstan viest
 - Yksi käyttäjä voi tykätä yksittäisestä viestistä samanaikaisesti vain kerran
 - Käyttäjä voi poistaa tykkäyksensä mistä tahansa viestistä
 - Kun viestiä tarkastellaan, siinä olevien tykkäysten lukumäärä on käyttäjälle näkyvissä
+- Kun käyttäjätili poistetaan, käyttäjän mahdolliset tykkäykset poistetaan
+- Kun viesti poistetaan, siihen kohdistuvat tykkäykset poistetaan
 
 **C) Muutosten kuvaileminen keskustelupalstan datarakenteeseen** 
 
 Koska yksi käyttäjä voi antaa tykkäyksen monelle viestille ja yhdellä viestillä voi olla monen eri käyttäjän tykkäys, on viestin ja käyttäjän välillä many-to-many-yhteys. Luodaan tykkäyksiä kuvavastavalle yhteydelle siis välitaulu, jonka nimi voisi olla esimerkiksi likes. Taulun primary key on komposiittiavain, joka muodostuu viiteavaimista posts- ja users-tauluihin. likes-taululla on siis kaksi saraketta: user_id ja post_id, jotka kumpikin ovat viiteavaimia. 
 
 Kun käyttäjä tykkää viestistä, likes-tauluun lisätään esimerkiksi web-ohjelmointirajapintafunktion kautta tietue, jossa on tykätyn viestitietueen id sekä tykkäyksen antaneen käyttäjän id. Koska primary keyn on oltava ainutlaatuinen (Yasar 2022), voi yhdellä käyttäjällä yhtä viestiä kohtaan olla likes-taulussa ainoastaan yksi tietue. Näin ollen taulun rakenne hoitaa sen, että yksittäinen käyttäjä voi tykätä yksittäisestä viestistä samanaikaisesti vain kerran. Jos käyttäjä poistaa tykkäyksensä viestistä, rajapintafunktion kautta likes-taulusta poistetaan tietue, jonka user_id vastaa tykkäyksen poistavaa käyttäjää ja post_id viestiä, josta käyttäjä poistaa tykkäyksensä.
+
+Jotta tykätty viesti tai viestistä tykännyt käyttäjä voidaan poistaa, määritellään likes-taulun vierasavaimille cascade-vierasavaintoiminto. Silloin käyttäjän poistamisen yhteydessä poistetaan myös käyttäjän eri viesteihin kohdistamat tykkäykset ja tietyn viestin poistamisen yhteydessä poistetaan kaikki kyseiseen viestiin kohdistuvat tykkäykset.
 
 <img src="./assets/image-23.png" alt="Aloitsuviestin poistaminen viite-eheyssäännön cascadeksi muuttamisen jälkeen" style="width: 75%;"/>
 
