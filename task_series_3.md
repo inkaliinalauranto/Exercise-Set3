@@ -145,7 +145,7 @@ Koska yksi käyttäjä voi antaa tykkäyksen monelle viestille ja yhdellä viest
 
 Kun käyttäjä tykkää viestistä, likes-tauluun lisätään esimerkiksi web-ohjelmointirajapintafunktion kautta tietue, jossa on tykätyn viestitietueen id sekä tykkäyksen antaneen käyttäjän id. Koska primary keyn on oltava ainutlaatuinen (Yasar 2022), voi yhdellä käyttäjällä yhtä viestiä kohtaan olla likes-taulussa ainoastaan yksi tietue. Näin ollen taulun rakenne hoitaa sen, että yksittäinen käyttäjä voi tykätä yksittäisestä viestistä samanaikaisesti vain kerran. Jos käyttäjä poistaa tykkäyksensä viestistä, rajapintafunktion kautta likes-taulusta poistetaan tietue, jonka user_id vastaa tykkäyksen poistavaa käyttäjää ja post_id viestiä, josta käyttäjä poistaa tykkäyksensä.
 
-Jotta tykätty viesti tai viestistä tykännyt käyttäjä voidaan poistaa, määritellään likes-taulun vierasavaimille cascade-vierasavaintoiminto. Silloin käyttäjän poistamisen yhteydessä poistetaan myös käyttäjän eri viesteihin kohdistamat tykkäykset ja tietyn viestin poistamisen yhteydessä poistetaan kaikki kyseiseen viestiin kohdistuvat tykkäykset.
+Jotta tykätty viesti tai viestistä tykännyt käyttäjä voidaan poistaa, määritellään likes-taulun vierasavaimille cascade-vierasavaintoiminnot. Silloin käyttäjän poistamisen yhteydessä poistetaan myös käyttäjän eri viesteihin kohdistamat tykkäykset ja tietyn viestin poistamisen yhteydessä poistetaan kaikki kyseiseen viestiin kohdistuvat tykkäykset.
 
 <img src="./assets/image-23.png" alt="Aloitsuviestin poistaminen viite-eheyssäännön cascadeksi muuttamisen jälkeen" style="width: 75%;"/>
 
