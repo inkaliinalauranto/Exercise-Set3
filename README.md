@@ -1,3 +1,7 @@
+## Tehtävä 3
+
+Tehtävä 3 löytyy dokumentaationa tiedostosta task_series_3.md.
+
 ## Projektin konfigurointi
 
 Kloonaa repositorio:
